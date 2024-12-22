@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-// Custom Card components remain the same...
+// Custom Card components
 const Card = ({ className, children }) => (
   <div style={{
     width: '100%',
@@ -29,9 +29,6 @@ const CardContent = ({ className, children }) => (
     {children}
   </div>
 );
-
-// Rest of your components and code remain exactly the same...
-// (Insert all the code from the previous version here)
 
 // Helper function to handle className string conversion
 const styleStringToObject = (className = '') => {
@@ -260,7 +257,6 @@ const CardView = ({
   );
 };
 
-// Main App Component
 const App = () => {
   const [currentView, setCurrentView] = useState('categories');
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -273,12 +269,16 @@ const App = () => {
   const signature = "מיכל שאוליאן לוי - מאמנת לצמיחה והתפתחות אישית";
 
   useEffect(() => {
-    const savedNotes = localStorage.getItem('notes');
-    if (savedNotes) setNotes(JSON.parse(savedNotes));
+    if (typeof window !== 'undefined') {
+      const savedNotes = localStorage.getItem('notes');
+      if (savedNotes) setNotes(JSON.parse(savedNotes));
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }
   }, [notes]);
 
   const pickRandomCard = (category = null) => {
@@ -383,8 +383,12 @@ const App = () => {
   );
 };
 
-
-// Modify the default export to be a client component
+// Export a Home component that uses our App
 export default function Home() {
+  if (typeof window === 'undefined') {
+    return null; // Return null during server-side rendering
+  }
+  
   return <App />;
 }
+
