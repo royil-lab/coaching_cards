@@ -1,5 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+
+// Custom Card components to replace shadcn/ui
+const Card = ({ className, children }) => (
+  <div style={{
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    padding: '24px',
+    ...styleStringToObject(className)
+  }}>
+    {children}
+  </div>
+);
+
+const CardContent = ({ className, children }) => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '300px',
+    gap: '16px',
+    ...styleStringToObject(className)
+  }}>
+    {children}
+  </div>
+);
+
+// Helper function to handle className string conversion
+const styleStringToObject = (className = '') => {
+  const styles = {};
+  if (className.includes('bg-gradient-to-b')) {
+    styles.background = 'linear-gradient(to bottom, #f3e8ff, #dbeafe)';
+  }
+  return styles;
+};
 
 // Card data
 const cardData = {
@@ -42,11 +78,36 @@ const cardData = {
 
 // CategoryView Component
 const CategoryView = ({ onCategorySelect, onRandomCard, setCurrentView }) => {
+  const buttonStyle = {
+    width: '100%',
+    padding: '16px',
+    borderRadius: '8px',
+    border: 'none',
+    marginBottom: '16px',
+    cursor: 'pointer'
+  };
+
+  const randomButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: '#9333ea',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px'
+  };
+
+  const categoryButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: 'white',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  };
+
   return (
-    <div className="space-y-4">
+    <div>
       <button
         onClick={onRandomCard}
-        className="w-full p-4 bg-purple-600 text-white rounded-lg shadow-md flex items-center justify-center space-x-2"
+        style={randomButtonStyle}
       >
         <span>קלף אקראי מכל הקטגוריות</span>
       </button>
@@ -54,7 +115,7 @@ const CategoryView = ({ onCategorySelect, onRandomCard, setCurrentView }) => {
       {Object.keys(cardData).map((category) => (
         <button
           key={category}
-          className="w-full p-4 bg-white rounded-lg shadow-md"
+          style={categoryButtonStyle}
           onClick={() => {
             onCategorySelect(category);
             setCurrentView('card');
@@ -82,68 +143,108 @@ const CardView = ({
   saveNote,
   cancelNote
 }) => {
+  const backButtonStyle = {
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    color: '#9333ea',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer'
+  };
+
+  const actionButtonStyle = {
+    padding: '8px',
+    borderRadius: '9999px',
+    backgroundColor: 'white',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+    border: 'none',
+    cursor: 'pointer'
+  };
+
+  const noteInputStyle = {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '8px',
+    border: '1px solid #e5ccff',
+    resize: 'none',
+    marginTop: '16px'
+  };
+
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <button
         onClick={onBack}
-        className="mb-4 flex items-center text-purple-600"
+        style={backButtonStyle}
       >
         <span>חזרה לקטגוריות</span>
       </button>
 
-      <Card className="w-full bg-gradient-to-b from-purple-100 to-blue-100 shadow-xl rounded-xl p-6">
-        <CardContent className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
-          <p className="text-lg text-center">{card?.text}</p>
+      <Card className="bg-gradient-to-b from-purple-100 to-blue-100">
+        <CardContent>
+          <p style={{ fontSize: '1.125rem', textAlign: 'center' }}>{card?.text}</p>
           {note && !showNoteInput && (
-            <div className="mt-4 p-2 bg-white/50 rounded-lg">
-              <p className="text-sm text-gray-600">הערה שלך: {note}</p>
+            <div style={{
+              marginTop: '16px',
+              padding: '8px',
+              backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              borderRadius: '8px'
+            }}>
+              <p style={{ fontSize: '0.875rem', color: '#4b5563' }}>הערה שלך: {note}</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      <div className="flex justify-center space-x-4 mt-4">
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
         <button
           onClick={onShare}
-          className="p-2 rounded-full bg-white shadow-md"
+          style={actionButtonStyle}
         >
           שיתוף
         </button>
 
         <button
           onClick={onAddNote}
-          className="p-2 rounded-full bg-white shadow-md"
+          style={actionButtonStyle}
         >
           הוספת הערה
         </button>
 
         <button
           onClick={onNextCard}
-          className="p-2 rounded-full bg-white shadow-md"
+          style={actionButtonStyle}
         >
           קלף הבא
         </button>
       </div>
 
       {showNoteInput && (
-        <div className="mt-4">
+        <div style={{ marginTop: '16px' }}>
           <textarea
             value={currentNote}
             onChange={(e) => setCurrentNote(e.target.value)}
-            className="w-full p-2 rounded-lg border border-purple-200 resize-none"
+            style={noteInputStyle}
             placeholder="הוסיפי הערה אישית..."
             rows={3}
           />
-          <div className="flex justify-end space-x-2 mt-2">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
             <button
               onClick={cancelNote}
-              className="px-4 py-2 text-gray-600"
+              style={{ padding: '8px 16px', color: '#4b5563', border: 'none', background: 'none', cursor: 'pointer' }}
             >
               ביטול
             </button>
             <button
               onClick={saveNote}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#9333ea',
+                color: 'white',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer'
+              }}
             >
               שמירה
             </button>
@@ -167,13 +268,11 @@ const App = () => {
   const signature = "מיכל שאוליאן לוי - מאמנת לצמיחה והתפתחות אישית";
 
   useEffect(() => {
-    // Load saved data from localStorage
     const savedNotes = localStorage.getItem('notes');
     if (savedNotes) setNotes(JSON.parse(savedNotes));
   }, []);
 
   useEffect(() => {
-    // Save data to localStorage
     localStorage.setItem('notes', JSON.stringify(notes));
   }, [notes]);
 
@@ -212,10 +311,38 @@ const App = () => {
     }
   };
 
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom, #f3e8ff, #dbeafe)',
+    padding: '16px'
+  };
+
+  const headerStyle = {
+    textAlign: 'center',
+    marginBottom: '24px'
+  };
+
+  const titleStyle = {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#6b21a8'
+  };
+
+  const footerStyle = {
+    textAlign: 'center',
+    marginTop: '24px',
+    padding: '16px'
+  };
+
+  const signatureStyle = {
+    fontSize: '0.875rem',
+    color: '#9333ea'
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-blue-100 p-4">
-      <header className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-purple-800">קלפי העצמה</h1>
+    <div style={containerStyle}>
+      <header style={headerStyle}>
+        <h1 style={titleStyle}>קלפי העצמה</h1>
       </header>
 
       {currentView === 'categories' ? (
@@ -244,8 +371,8 @@ const App = () => {
         />
       )}
 
-      <footer className="text-center mt-6 p-4">
-        <p className="text-sm text-purple-600">{signature}</p>
+      <footer style={footerStyle}>
+        <p style={signatureStyle}>{signature}</p>
       </footer>
     </div>
   );
